@@ -1,4 +1,0 @@
-email,site_id,business_name,industry,captured_at,status,consent_download,consent_marketing,consent_date
-test@example.com,test123,Demo Business,plumbing,2024-06-07T11:15:00,free_download,True,False,2024-06-07T11:15:00
-john@landscaping.com,abc456,Green Valley Landscaping,landscaping,2024-06-07T10:30:00,free_download,True,True,2024-06-07T10:30:00
-sarah@consulting.com,def789,Business Solutions Pro,professional_services,2024-06-07T09:45:00,free_download,True,False,2024-06-07T09:45:00

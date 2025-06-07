@@ -50,12 +50,15 @@ static/uploads/
 .DS_Store
 Thumbs.db
 
-# Test files
-test_*.csv
+# Development files (PRD, examples, test data)
+.dev/
+*.csv
 debug_*.html
+prd.txt
 
-# Sensitive files
-supabase_client.py
+# Legacy files
+app.py.bak
+old_*
 
 # Docker
 docker-compose.override.yml
