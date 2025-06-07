@@ -42,19 +42,30 @@ def store_email_lead(email, site_id, consent_download=True, consent_marketing=Fa
         
         # Store in Supabase (or file in dev mode)
         try:
-            if hasattr(current_app, 'supabase_client') and current_app.supabase_client:
-                try:
-                    current_app.supabase_client.table('email_leads').insert(lead_data).execute()
+            from app.services.supabase_service import supabase_service
+            
+            if supabase_service.is_enabled():
+                # Try Supabase first
+                result = supabase_service.store_email_lead(
+                    email=email,
+                    site_id=site_id,
+                    consent_download=consent_download,
+                    consent_marketing=consent_marketing,
+                    business_name=business_name,
+                    industry=industry
+                )
+                if result:
                     print(f"✅ Email lead stored in Supabase: {email}")
-                except Exception as e:
-                    print(f"⚠️ Supabase storage failed, using file backup: {e}")
+                    return result
+                else:
+                    print(f"⚠️ Supabase storage failed, using file backup")
                     store_email_to_file(lead_data)
             else:
                 # Development mode - store in local file
                 store_email_to_file(lead_data)
-        except RuntimeError:
-            # We're outside application context, just use file storage
-            print(f"📝 Outside app context, using file storage")
+        except Exception as e:
+            # Fallback to file storage
+            print(f"📝 Error with Supabase ({e}), using file storage")
             store_email_to_file(lead_data)
             
     except Exception as e:

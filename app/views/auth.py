@@ -7,6 +7,7 @@ import os
 import tempfile
 import zipfile
 from datetime import datetime
+from app.services.redis_service import redis_service, rate_limit
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -92,6 +93,7 @@ def logout():
 
 
 @auth_bp.route('/email-download', methods=['POST'])
+@rate_limit(limit=20, window=300)  # 20 downloads per 5 minutes per IP
 def email_download():
     """Handle email submission for free download"""
     try:
@@ -109,6 +111,11 @@ def email_download():
         if not site_id or not email or not consent_download:
             return jsonify({'success': False, 'message': 'Missing required fields'})
         
+        # Check for duplicate lead submission
+        is_duplicate = redis_service.check_lead_duplicate(email, site_id)
+        if is_duplicate:
+            print(f"⚠️ Duplicate lead detected: {email} for site {site_id}")
+        
         # Always capture lead first (even if download fails)
         print(f"📧 About to capture lead: {email} for site {site_id}")
         from app.utils.lead_capture import capture_lead
@@ -119,9 +126,12 @@ def email_download():
             industry = business_data.get('industry')
             print(f"📊 Found business data in session: {business_name}, {industry}")
             
-            capture_lead(email, site_id, consent_marketing == 'on', 
-                        business_name=business_name, industry=industry)
-            print(f"✅ Lead captured: {email} for site {site_id}")
+            if not is_duplicate:
+                capture_lead(email, site_id, consent_marketing == 'on', 
+                            business_name=business_name, industry=industry)
+                print(f"✅ Lead captured: {email} for site {site_id}")
+            else:
+                print(f"⏭️ Skipping duplicate lead capture")
         except Exception as e:
             print(f"⚠️ Lead capture error: {e}")
             import traceback
