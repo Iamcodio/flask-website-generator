@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Analytics Dashboard</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Generations -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-sm font-medium text-gray-500 uppercase">Total Generations</h3>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.total_generations }}</p>
+            <p class="text-sm text-gray-600 mt-2">All time</p>
+        </div>
+        
+        <!-- Today's Generations -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-sm font-medium text-gray-500 uppercase">Today</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ stats.today }}</p>
+            <p class="text-sm text-gray-600 mt-2">Site generations</p>
+        </div>
+        
+        <!-- This Week -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-sm font-medium text-gray-500 uppercase">This Week</h3>
+            <p class="text-3xl font-bold text-green-600">{{ stats.this_week }}</p>
+            <p class="text-sm text-gray-600 mt-2">Site generations</p>
+        </div>
+    </div>
+    
+    <!-- By Industry -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Generations by Industry</h2>
+        <div class="space-y-3">
+            {% for industry, count in stats.by_industry.items() %}
+            <div class="flex justify-between items-center">
+                <span class="text-gray-700 capitalize">{{ industry.replace('_', ' ') }}</span>
+                <span class="font-semibold">{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="mt-8 text-sm text-gray-500">
+        <p>Analytics data is cached for 1 minute. Redis status: 
+            {% if stats.total_generations > 0 %}
+            <span class="text-green-600">Connected</span>
+            {% else %}
+            <span class="text-red-600">Not available</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endblock %}

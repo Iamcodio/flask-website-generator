@@ -62,3 +62,16 @@ old_*
 
 # Docker
 docker-compose.override.yml
+nginx/certs/
+*.pem
+*.key
+*.crt
+
+# Monitoring data
+prometheus_data/
+grafana_data/
+
+# Logs
+*.log
+nginx/logs/
+/logs/

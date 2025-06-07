@@ -1,25 +1,63 @@
+# Base docker-compose for shared services
 version: '3.8'
+
+x-app-common: &app-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment: &common-env
+    FLASK_APP: run.py
+    SUPABASE_URL: ${SUPABASE_URL}
+    SUPABASE_KEY: ${SUPABASE_KEY}
+    UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL}
+    UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN}
+    SECRET_KEY: ${SECRET_KEY}
+  volumes:
+    - ./generated_sites:/app/generated_sites
+    - uploads_data:/app/app/static/uploads
+  depends_on:
+    - redis
+  restart: unless-stopped
 
 services:
   web:
-    build: .
+    <<: *app-common
+    container_name: flask_app
     ports:
       - "5000:5000"
     environment:
-      - SECRET_KEY=production-secret-key-change-this
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_KEY=${SUPABASE_KEY}
+      <<: *common-env
+      FLASK_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/flask_website_generator}
+      REDIS_URL: redis://redis:6379
+
+  redis:
+    image: redis:7-alpine
+    container_name: flask_redis
+    command: redis-server --appendonly yes
     volumes:
-      - ./generated_sites:/app/generated_sites
+      - redis_data:/data
+    ports:
+      - "6379:6379"
     restart: unless-stopped
 
   nginx:
     image: nginx:alpine
+    container_name: flask_nginx
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./generated_sites:/usr/share/nginx/html/sites
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ./generated_sites:/var/www/sites:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - nginx_logs:/var/log/nginx
     depends_on:
       - web
     restart: unless-stopped
+
+volumes:
+  redis_data:
+  uploads_data:
+  nginx_logs:

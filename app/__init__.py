@@ -34,10 +34,36 @@ def create_app(config_name='development'):
     from app.views.main import main_bp
     from app.views.auth import auth_bp
     from app.views.admin import admin_bp
+    from app.views.analytics import analytics_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(analytics_bp)
+    
+    # Health check endpoint
+    @app.route('/health')
+    def health_check():
+        """Health check endpoint for Docker and monitoring"""
+        from flask import jsonify
+        from app.services.redis_service import redis_service
+        from app.services.supabase_service import supabase_service
+        
+        health_status = {
+            'status': 'healthy',
+            'timestamp': datetime.utcnow().isoformat(),
+            'services': {
+                'app': 'running',
+                'redis': 'connected' if redis_service.is_enabled() else 'disconnected',
+                'supabase': 'connected' if supabase_service.is_enabled() else 'disconnected'
+            }
+        }
+        
+        # Check if all critical services are running
+        if not all(v == 'connected' or v == 'running' for v in health_status['services'].values()):
+            health_status['status'] = 'degraded'
+            
+        return jsonify(health_status)
     
     # Error handlers
     @app.errorhandler(413)

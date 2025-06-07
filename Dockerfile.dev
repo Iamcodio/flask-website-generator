@@ -1,0 +1,51 @@
+# Development Dockerfile with hot reload support
+FROM python:3.11-slim
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    git \
+    vim \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 flaskuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY requirements.txt requirements-dev.txt* ./
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    if [ -f requirements-dev.txt ]; then pip install --no-cache-dir -r requirements-dev.txt; fi
+
+# Install additional dev tools
+RUN pip install --no-cache-dir \
+    flask-debugtoolbar \
+    pytest \
+    pytest-cov \
+    black \
+    flake8 \
+    ipython
+
+# Switch to non-root user
+USER flaskuser
+
+# Environment variables
+ENV FLASK_APP=run.py \
+    FLASK_ENV=development \
+    FLASK_DEBUG=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Expose ports
+EXPOSE 5000 5678
+
+# Run Flask in debug mode
+CMD ["flask", "run", "--host=0.0.0.0", "--debug", "--reload"]
