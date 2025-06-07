@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+
+{% block title %}Tell Us About Your Business - SiteGen{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Tell Us About Your Business</h1>
+        <p class="text-gray-600">We'll use this information to create your custom website</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="bg-white rounded-lg shadow-lg p-8">
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Quick CSV Upload for Testing -->
+            <div class="md:col-span-2 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h2 class="text-lg font-semibold text-blue-800 mb-3">🚀 Quick Setup (For Testing)</h2>
+                <div class="flex items-center gap-4">
+                    <input type="file" name="csv_upload" accept=".csv" class="text-sm text-blue-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+                    <button type="button" id="load-sample-data" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" onclick="testButtonClick()">Load Sample Data</button>
+                </div>
+                <p class="text-xs text-blue-600 mt-2">Upload a CSV with business data or click "Load Sample Data" to fill form automatically</p>
+            </div>
+            
+            <!-- Basic Info -->
+            <div class="md:col-span-2">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
+                <input type="text" name="business_name" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="BluePipe Plumbing & Heating">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Industry *</label>
+                <select name="industry" required id="industry-select"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select your industry</option>
+                    <option value="plumbing">Plumbing & Heating</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="construction">Construction</option>
+                    <option value="landscaping">Landscaping</option>
+                    <option value="automotive">Automotive</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="retail">Retail</option>
+                    <option value="professional_services">Professional Services</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="custom">Custom Industry</option>
+                </select>
+            </div>
+
+            <!-- Custom Industry Field -->
+            <div id="custom-industry-field" style="display: none;">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Custom Industry *</label>
+                <input type="text" name="custom_industry" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Enter your specific industry (e.g., Solar Installation, Pet Grooming, etc.)">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                <input type="email" name="email" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="david@bluepipe.ie">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input type="tel" name="phone" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="021 123 4567">
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Business Address</label>
+                <input type="text" name="address" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="123 Main Street, Cork, Ireland">
+            </div>
+
+            <!-- Owner Info -->
+            <div class="md:col-span-2 mt-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">About You</h2>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Owner/Manager Name</label>
+                <input type="text" name="owner_name" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="David Ryan">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
+                <input type="number" name="years_experience" min="0" max="99"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="15">
+            </div>
+
+            <!-- Business Details -->
+            <div class="md:col-span-2 mt-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Business Story</h2>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Business Story</label>
+                <textarea name="business_story" rows="3" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Tell us about your business. How did it start? What makes you unique? What drives your passion for what you do?"></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Mission Statement</label>
+                <textarea name="mission_statement" rows="3" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="To provide honest, reliable plumbing services to our community with integrity and expertise."></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Company Values (one per line)</label>
+                <textarea name="values" rows="4" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Quality workmanship&#10;Customer satisfaction&#10;Fair pricing&#10;24/7 availability"></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Business Goals</label>
+                <textarea name="goals" rows="3" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Expand service area, build long-term customer relationships, become the most trusted plumber in Cork."></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Main Services (one per line)</label>
+                <textarea name="services" rows="5" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Emergency plumbing repairs&#10;Boiler installation and maintenance&#10;Bathroom renovations&#10;Leak detection&#10;Drain cleaning"></textarea>
+            </div>
+
+            <!-- Brand Customization -->
+            <div class="md:col-span-2 mt-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">🎨 Brand Customization</h2>
+                
+                <!-- Primary Color Selector -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Primary Brand Color</label>
+                    <div class="grid grid-cols-8 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#0077CC" class="sr-only" checked>
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #0077CC;" title="Blue (Default)"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#DC2626" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #DC2626;" title="Red"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#059669" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #059669;" title="Green"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#7C3AED" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #7C3AED;" title="Purple"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#EA580C" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #EA580C;" title="Orange"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#0891B2" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #0891B2;" title="Cyan"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#BE123C" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #BE123C;" title="Rose"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#4338CA" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #4338CA;" title="Indigo"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#0F766E" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #0F766E;" title="Teal"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#B45309" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #B45309;" title="Amber"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#9333EA" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #9333EA;" title="Violet"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#DB2777" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #DB2777;" title="Pink"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#65A30D" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #65A30D;" title="Lime"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#CA8A04" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #CA8A04;" title="Yellow"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#374151" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #374151;" title="Gray"></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="primary_color" value="#1F2937" class="sr-only">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-400" style="background-color: #1F2937;" title="Dark"></div>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Choose your brand's primary color for buttons, links, and accents</p>
+                </div>
+            </div>
+
+            <!-- Image Uploads -->
+            <div class="md:col-span-2">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">📸 Upload Your Images</h2>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-blue-800 mb-2">📋 Image Guidelines</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• <strong>Format:</strong> PNG, JPG, or WebP recommended</li>
+                        <li>• <strong>Size:</strong> Maximum 16MB per file</li>
+                        <li>• <strong>Resolution:</strong> At least 1200px wide for best quality</li>
+                        <li>• <strong>Logo:</strong> Square format (1:1 ratio) with transparent background</li>
+                        <li>• <strong>Hero Image:</strong> Landscape (16:9 or 3:2 ratio) showing your business</li>
+                        <li>• <strong>About/Team:</strong> Professional headshots or team photos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Logo Upload -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-3">🏷️ Business Logo</label>
+                <div class="upload-zone">
+                    <i data-lucide="image" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                    <input type="file" name="logo" accept="image/*" 
+                           class="hidden" id="logo-upload">
+                    <label for="logo-upload" class="cursor-pointer">
+                        <div class="text-sm text-gray-600">
+                            <span class="text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            Square format, transparent background preferred
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Hero Image Upload -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-3">🎭 Hero/Background Image</label>
+                <div class="upload-zone">
+                    <i data-lucide="mountain" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                    <input type="file" name="hero_image" accept="image/*" 
+                           class="hidden" id="hero-upload">
+                    <label for="hero-upload" class="cursor-pointer">
+                        <div class="text-sm text-gray-600">
+                            <span class="text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            Main background for your homepage (landscape format)
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- About Image Upload -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-3">🏢 About Us Image</label>
+                <div class="upload-zone">
+                    <i data-lucide="building" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                    <input type="file" name="about_image" accept="image/*" 
+                           class="hidden" id="about-upload">
+                    <label for="about-upload" class="cursor-pointer">
+                        <div class="text-sm text-gray-600">
+                            <span class="text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            Photo of your business, workspace, or services
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Team Image Upload -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-3">👥 Team/Owner Photo</label>
+                <div class="upload-zone">
+                    <i data-lucide="users" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                    <input type="file" name="team_image" accept="image/*" 
+                           class="hidden" id="team-upload">
+                    <label for="team-upload" class="cursor-pointer">
+                        <div class="text-sm text-gray-600">
+                            <span class="text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            Professional headshot or team photo
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button type="submit" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
+                Generate My Website
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Complete sample data loading function
+function testButtonClick() {
+    console.log('Loading complete sample data...');
+    
+    // Sample data
+    const sampleData = {
+        business_name: 'Green Valley Landscaping',
+        industry: 'landscaping',
+        email: 'contact@greenvalley.com',
+        phone: '555-123-4567',
+        address: '123 Garden Street, Springfield, CA 90210',
+        owner_name: 'Sarah Johnson',
+        years_experience: '12',
+        business_story: 'Founded in 2012 by Sarah Johnson, Green Valley Landscaping started as a small family business with a big dream: to make beautiful, sustainable outdoor spaces accessible to everyone. What began with a single truck and a passion for gardening has grown into the region\'s most trusted landscaping company.',
+        mission_statement: 'To transform outdoor spaces into beautiful, sustainable landscapes that bring joy and increase property value.',
+        values: 'Sustainable practices\nCustomer satisfaction\nQuality craftsmanship\nEnvironmental stewardship',
+        goals: 'Expand services to include irrigation systems, become the leading landscape company in the region, develop eco-friendly solutions.',
+        services: 'Landscape Design\nGarden Installation\nLawn Maintenance\nTree Services\nIrrigation Systems\nSeasonal Cleanups',
+        primary_color: '#059669'
+    };
+    
+    // Fill all form fields
+    Object.keys(sampleData).forEach(key => {
+        if (key === 'primary_color') {
+            // Handle color radio buttons
+            const colorRadio = document.querySelector(`[name="primary_color"][value="${sampleData[key]}"]`);
+            if (colorRadio) {
+                colorRadio.checked = true;
+                // Trigger change event to update visual selection
+                colorRadio.dispatchEvent(new Event('change'));
+            }
+        } else if (key === 'industry') {
+            // Handle industry dropdown
+            const industryField = document.querySelector('[name="industry"]');
+            if (industryField) {
+                industryField.value = sampleData[key];
+            }
+        } else {
+            // Handle all other text fields and textareas
+            const field = document.querySelector(`[name="${key}"]`);
+            if (field) {
+                field.value = sampleData[key];
+            }
+        }
+    });
+    
+    console.log('All sample data loaded');
+    alert('✅ Complete sample data loaded! Ready to generate website.');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Debug: Check if elements exist
+    console.log('DOM Content Loaded');
+    console.log('Sample button exists:', document.getElementById('load-sample-data'));
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    
+    // Custom industry field handling
+    const industrySelect = document.getElementById('industry-select');
+    const customIndustryField = document.getElementById('custom-industry-field');
+    const customIndustryInput = document.querySelector('input[name="custom_industry"]');
+    
+    industrySelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customIndustryField.style.display = 'block';
+            customIndustryInput.required = true;
+        } else {
+            customIndustryField.style.display = 'none';
+            customIndustryInput.required = false;
+            customIndustryInput.value = '';
+        }
+    });
+    
+    // Color selector handling
+    const colorInputs = document.querySelectorAll('input[name="primary_color"]');
+    colorInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Reset all borders
+            colorInputs.forEach(inp => {
+                inp.nextElementSibling.style.borderColor = '#d1d5db';
+                inp.nextElementSibling.style.borderWidth = '2px';
+            });
+            
+            // Highlight selected color
+            if (this.checked) {
+                this.nextElementSibling.style.borderColor = '#374151';
+                this.nextElementSibling.style.borderWidth = '3px';
+            }
+        });
+        
+        // Set initial state
+        if (input.checked) {
+            input.nextElementSibling.style.borderColor = '#374151';
+            input.nextElementSibling.style.borderWidth = '3px';
+        }
+    });
+    
+    const maxSize = 16 * 1024 * 1024; // 16MB in bytes
+    const fileInputs = document.querySelectorAll('input[type="file"]:not([name="csv_upload"])');
+    
+    // Enhanced file upload handling
+    fileInputs.forEach(input => {
+        const uploadZone = input.closest('.upload-zone');
+        const label = uploadZone.querySelector('label[for="' + input.id + '"]');
+        
+        // File selection handling
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            console.log('File change event:', this.id, file);
+            
+            if (file) {
+                console.log('File selected:', file.name, file.type, file.size);
+                
+                if (file.size > maxSize) {
+                    alert('📁 File is too large! Please select an image smaller than 16MB.');
+                    this.value = '';
+                    updateUploadZoneText(uploadZone, input.id, null);
+                    return;
+                }
+                
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('🚫 Invalid file type! Please upload PNG, JPG, or WebP images only.');
+                    this.value = '';
+                    updateUploadZoneText(uploadZone, input.id, null);
+                    return;
+                }
+                
+                console.log('Updating upload zone with file');
+                updateUploadZoneText(uploadZone, input.id, file);
+            } else {
+                console.log('No file selected, resetting upload zone');
+                updateUploadZoneText(uploadZone, input.id, null);
+            }
+        });
+        
+        // Drag and drop handling
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                input.files = files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+    
+    function updateUploadZoneText(uploadZone, inputId, file) {
+        console.log('updateUploadZoneText called:', inputId, file);
+        
+        const textDiv = uploadZone.querySelector('.text-sm.text-gray-600');
+        const subtextDiv = uploadZone.querySelector('.text-xs.text-gray-500');
+        
+        console.log('Found elements:', textDiv, subtextDiv);
+        
+        if (file) {
+            console.log('Setting green styling for file:', file.name);
+            textDiv.innerHTML = `<span class="text-green-600">✅ ${file.name}</span>`;
+            subtextDiv.textContent = `${(file.size / 1024 / 1024).toFixed(1)}MB • Click to change`;
+            uploadZone.style.borderColor = '#22c55e';
+            uploadZone.style.backgroundColor = '#f0fdf4';
+            console.log('Upload zone styled:', uploadZone.style.borderColor, uploadZone.style.backgroundColor);
+        } else {
+            console.log('Resetting upload zone styling');
+            // Reset to original text based on input type
+            const originalTexts = {
+                'logo-upload': 'Square format, transparent background preferred',
+                'hero-upload': 'Main background for your homepage (landscape format)',
+                'about-upload': 'Photo of your business, workspace, or services',
+                'team-upload': 'Professional headshot or team photo'
+            };
+            
+            textDiv.innerHTML = '<span class="text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop';
+            subtextDiv.textContent = originalTexts[inputId] || 'Select an image file';
+            uploadZone.style.borderColor = '';
+            uploadZone.style.backgroundColor = '';
+        }
+    }
+    
+    // Form submission validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        let hasLargeFile = false;
+        let hasInvalidType = false;
+        
+        fileInputs.forEach(input => {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > maxSize) hasLargeFile = true;
+                
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) hasInvalidType = true;
+            }
+        });
+        
+        if (hasLargeFile) {
+            e.preventDefault();
+            alert('📁 Please ensure all uploaded images are smaller than 16MB before submitting.');
+            return;
+        }
+        
+        if (hasInvalidType) {
+            e.preventDefault();
+            alert('🚫 Please ensure all uploaded files are valid image formats (PNG, JPG, WebP).');
+            return;
+        }
+    });
+    
+    // CSV Upload and Sample Data functionality
+    const csvUpload = document.querySelector('input[name="csv_upload"]');
+    const loadSampleBtn = document.getElementById('load-sample-data');
+    
+    // Sample data for quick testing
+    const sampleData = {
+        business_name: 'Green Valley Landscaping',
+        industry: 'landscaping',
+        email: 'contact@greenvalley.com',
+        phone: '555-123-4567',
+        address: '123 Garden Street, Springfield, CA 90210',
+        owner_name: 'Sarah Johnson',
+        years_experience: '12',
+        business_story: 'Founded in 2012 by Sarah Johnson, Green Valley Landscaping started as a small family business with a big dream: to make beautiful, sustainable outdoor spaces accessible to everyone. What began with a single truck and a passion for gardening has grown into the region\'s most trusted landscaping company.',
+        mission_statement: 'To transform outdoor spaces into beautiful, sustainable landscapes that bring joy and increase property value.',
+        values: 'Sustainable practices\nCustomer satisfaction\nQuality craftsmanship\nEnvironmental stewardship',
+        goals: 'Expand services to include irrigation systems, become the leading landscape company in the region, develop eco-friendly solutions.',
+        services: 'Landscape Design\nGarden Installation\nLawn Maintenance\nTree Services\nIrrigation Systems\nSeasonal Cleanups',
+        primary_color: '#059669'
+    };
+    
+    // Load sample data
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Sample data button clicked');
+            
+            // Fill basic fields first
+            const businessNameField = document.querySelector('[name="business_name"]');
+            if (businessNameField) businessNameField.value = sampleData.business_name;
+            
+            const emailField = document.querySelector('[name="email"]');
+            if (emailField) emailField.value = sampleData.email;
+            
+            const phoneField = document.querySelector('[name="phone"]');
+            if (phoneField) phoneField.value = sampleData.phone;
+            
+            // Handle industry dropdown
+            const industryField = document.querySelector('[name="industry"]');
+            if (industryField) industryField.value = sampleData.industry;
+            
+            // Handle color radio buttons
+            const colorRadio = document.querySelector(`[name="primary_color"][value="${sampleData.primary_color}"]`);
+            if (colorRadio) {
+                colorRadio.checked = true;
+                colorRadio.dispatchEvent(new Event('change'));
+            }
+            
+            // Fill all other text fields
+            Object.keys(sampleData).forEach(key => {
+                if (['business_name', 'email', 'phone', 'industry', 'primary_color'].includes(key)) return;
+                
+                const field = document.querySelector(`[name="${key}"]`);
+                if (field && field.type !== 'radio') {
+                    field.value = sampleData[key];
+                }
+            });
+            
+            alert('✅ Sample data loaded! You can now generate the website or modify any fields.');
+        });
+    } else {
+        console.error('Load sample data button not found');
+    }
+    
+    // CSV Upload handler
+    csvUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type === 'text/csv') {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csv = e.target.result;
+                    console.log('CSV content:', csv);
+                    const lines = csv.split('\n');
+                    console.log('Lines:', lines);
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    console.log('Headers:', headers);
+                    
+                    // Handle quoted CSV fields properly
+                    const csvLine = lines[1];
+                    console.log('Data line:', csvLine);
+                    
+                    // Simple CSV parsing that handles quoted fields
+                    const values = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < csvLine.length; i++) {
+                        const char = csvLine[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            values.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    values.push(current.trim()); // Don't forget the last value
+                    
+                    console.log('Parsed values:', values);
+                    
+                    const csvData = {};
+                    headers.forEach((header, index) => {
+                        if (values[index]) {
+                            csvData[header] = values[index];
+                        }
+                    });
+                    
+                    // Fill form with CSV data
+                    Object.keys(csvData).forEach(key => {
+                        const field = document.querySelector(`[name="${key}"]`);
+                        if (field) {
+                            if (field.type === 'radio') {
+                                const radioOption = document.querySelector(`[name="${key}"][value="${csvData[key]}"]`);
+                                if (radioOption) {
+                                    radioOption.checked = true;
+                                    radioOption.dispatchEvent(new Event('change'));
+                                }
+                            } else {
+                                // Convert pipe-separated values to line breaks for textarea fields
+                                let value = csvData[key];
+                                if (key === 'values' || key === 'services') {
+                                    value = value.replace(/\s*\|\s*/g, '\n');
+                                }
+                                field.value = value;
+                            }
+                        }
+                    });
+                    
+                    alert('✅ CSV data loaded successfully!');
+                } catch (error) {
+                    alert('❌ Error reading CSV file. Please check the format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}SiteGen - AI Website Builder for Local Businesses{% endblock %}
+
+{% block content %}
+<div class="gradient-bg min-h-screen flex items-center">
+    <div class="max-w-7xl mx-auto px-4 py-16 text-center">
+        <h1 class="text-5xl font-bold text-white mb-6">
+            Get Your Business Online in <span class="text-yellow-300">Minutes</span>
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+            Professional websites for local businesses. Just fill out our simple form and get a stunning, mobile-ready website instantly.
+        </p>
+        <div class="space-y-4">
+            <a href="{{ url_for('capture_business_info') }}" 
+               class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105">
+                Build My Website Now
+            </a>
+            <p class="text-gray-300 text-sm">No technical skills required • 5 minute setup</p>
+        </div>
+    </div>
+</div>
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Perfect for Local Businesses</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🔧</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Contractors & Trades</h3>
+                <p class="text-gray-600">Plumbers, electricians, carpenters, and more</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🏪</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Local Services</h3>
+                <p class="text-gray-600">Restaurants, salons, fitness studios, and shops</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">💼</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Professional Services</h3>
+                <p class="text-gray-600">Consultants, lawyers, accountants, and agencies</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Site Generator{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons (Shadcn default) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            padding: 1.5rem;
+            text-align: center;
+            background: #fafafa;
+        }
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+        }
+        .upload-zone.dragover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="text-xl font-bold text-gray-800">SiteGen</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('capture_business_info') }}" class="text-gray-600 hover:text-gray-900">Create Site</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mx-4 mt-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
