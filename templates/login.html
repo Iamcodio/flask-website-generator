@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Login - SiteGen{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                Welcome to SiteGen
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Enter your email to get started - no password needed!
+            </p>
+        </div>
+
+        <!-- Login Form -->
+        <form class="mt-8 space-y-6" method="POST">
+            <div class="bg-white py-8 px-6 shadow-lg rounded-lg">
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address
+                        </label>
+                        <input id="email" 
+                               name="email" 
+                               type="email" 
+                               autocomplete="email" 
+                               required 
+                               class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="your@email.com">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit" 
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 font-medium transition-colors">
+                        🚀 Send Magic Link
+                    </button>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <p class="text-xs text-gray-500">
+                        We'll send you a secure login link via email.<br>
+                        No passwords to remember! 🎉
+                    </p>
+                </div>
+            </div>
+        </form>
+
+        <!-- Success/Error Messages -->
+        {% if message %}
+        <div class="mt-4 p-4 {% if message_type == 'success' %}bg-green-50 border border-green-200 text-green-800{% else %}bg-red-50 border border-red-200 text-red-800{% endif %} rounded-lg">
+            <div class="flex">
+                <div class="text-sm">
+                    {{ message | safe }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Features -->
+        <div class="mt-8 bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">✨ What you get:</h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✓</span>
+                    Save and manage all your generated websites
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✓</span>
+                    Edit and regenerate sites anytime
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✓</span>
+                    Download your sites for hosting anywhere
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✓</span>
+                    Track performance and analytics
+                </li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center">
+            <p class="text-sm text-gray-500">
+                Don't need an account? 
+                <a href="/capture" class="text-blue-600 hover:text-blue-500">
+                    Create a site without logging in
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

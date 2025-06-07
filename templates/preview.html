@@ -37,20 +37,162 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="mt-8 text-center space-x-4">
-        <a href="{{ url_for('capture_business_info') }}" 
-           class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
-            Make Changes
-        </a>
-        <button onclick="deployToProduction()" 
-                class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg">
-            Deploy Website
-        </button>
-        <a href="/generated_sites/{{ business.id }}/index.html" target="_blank"
-           class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">
-            View Full Site
-        </a>
+    <!-- Download Options -->
+    <div class="mt-8 max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Free Option -->
+            <div class="bg-white border-2 border-gray-200 rounded-lg p-6 relative">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🆓</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Download Files</h3>
+                    <p class="text-gray-600 mb-4">Get your HTML & CSS files to host anywhere</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-4">FREE</div>
+                    
+                    <ul class="text-sm text-gray-600 mb-6 space-y-2">
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Complete HTML & CSS files
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            All uploaded images included
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Self-host anywhere
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-gray-400 mr-2">✗</span>
+                            <span class="text-gray-400">No hosting included</span>
+                        </li>
+                    </ul>
+                    
+                    {% if session.logged_in %}
+                    <a href="/download/{{ business.id }}" 
+                       class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg inline-block">
+                        📥 Download Now
+                    </a>
+                    {% else %}
+                    <button onclick="showEmailForm()" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
+                        📧 Enter Email to Download
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Premium Option -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200 rounded-lg p-6 relative">
+                <div class="absolute top-4 right-4 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                    POPULAR
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Hosted + CMS</h3>
+                    <p class="text-gray-600 mb-4">Full hosting with blog CMS & analytics</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-1">$49</div>
+                    <div class="text-sm text-gray-600 mb-4">/month</div>
+                    
+                    <ul class="text-sm text-gray-600 mb-6 space-y-2">
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Everything in Free
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Fast CDN hosting
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Markdown blog CMS
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Google Analytics integration
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Custom domain support
+                        </li>
+                    </ul>
+                    
+                    <button onclick="startHostedTrial()" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
+                        🚀 Start Hosting
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-6 text-center space-x-4">
+            <a href="{{ url_for('capture_business_info') }}" 
+               class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+                Make Changes
+            </a>
+            <a href="/generated_sites/{{ business.id }}/index.html" target="_blank"
+               class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+                View Full Site
+            </a>
+        </div>
+    </div>
+    
+    <!-- Email Form Modal (Hidden by default) -->
+    <div id="emailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">📧 Download Your Website</h3>
+            <p class="text-gray-600 mb-4">Enter your email to receive the download link:</p>
+            
+            <form id="emailDownloadForm" onsubmit="submitEmailDownload(event)">
+                <input type="hidden" name="site_id" value="{{ business.id }}">
+                <div class="mb-4">
+                    <input type="email" 
+                           name="email" 
+                           placeholder="your@email.com"
+                           required
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <!-- GDPR Compliance Checkboxes -->
+                <div class="mb-4 space-y-3">
+                    <label class="flex items-start space-x-2">
+                        <input type="checkbox" 
+                               name="consent_download" 
+                               required
+                               class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-sm text-gray-700">
+                            I consent to receiving my website download link via email.
+                        </span>
+                    </label>
+                    
+                    <label class="flex items-start space-x-2">
+                        <input type="checkbox" 
+                               name="consent_marketing" 
+                               class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-sm text-gray-700">
+                            I would like to receive helpful website tips, hosting offers, and updates from SiteGen. <em>(Optional)</em>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="mb-4 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+                    <p class="mb-2"><strong>Privacy Notice:</strong></p>
+                    <p>We use your email to send your download link and, if consented, occasional helpful content about website management. You can unsubscribe anytime. We never share your data with third parties. Read our <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>.</p>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button type="button" 
+                            onclick="hideEmailForm()"
+                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                        Send Link
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Website Details -->
@@ -81,7 +223,7 @@
                 <div class="mt-4">
                     <p class="text-sm text-gray-500">
                         <strong>Site ID:</strong> {{ business.id }}<br>
-                        <strong>Generated:</strong> {{ business.created_at[:19] }}
+                        <strong>Generated:</strong> {{ business.get('created_at', 'Just now')[:19] if business.get('created_at') else 'Just now' }}
                     </p>
                 </div>
             </div>
@@ -90,10 +232,66 @@
 </div>
 
 <script>
-function deployToProduction() {
-    if (confirm('Deploy your website to production? This will make it live on the internet.')) {
-        alert('Deployment feature coming soon! For now, you can download your files and host them anywhere.');
+function showEmailForm() {
+    document.getElementById('emailModal').classList.remove('hidden');
+    document.getElementById('emailModal').classList.add('flex');
+}
+
+function hideEmailForm() {
+    document.getElementById('emailModal').classList.add('hidden');
+    document.getElementById('emailModal').classList.remove('flex');
+}
+
+function submitEmailDownload(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const email = formData.get('email');
+    const siteId = formData.get('site_id');
+    const consentDownload = formData.get('consent_download') === 'on';
+    const consentMarketing = formData.get('consent_marketing') === 'on';
+    
+    // Validate required consent
+    if (!consentDownload) {
+        alert('Please consent to receiving your download link via email.');
+        return;
     }
+    
+    // Show loading state
+    event.target.querySelector('button[type="submit"]').textContent = 'Sending...';
+    
+    fetch('/email-download', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            site_id: siteId,
+            consent_download: consentDownload,
+            consent_marketing: consentMarketing
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('📧 Download link sent to ' + email + '! Check your email.');
+            hideEmailForm();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to send email'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error sending email. Please try again.');
+    })
+    .finally(() => {
+        event.target.querySelector('button[type="submit"]').textContent = 'Send Link';
+    });
+}
+
+function startHostedTrial() {
+    alert('🚀 Hosted option coming soon! Contact us at support@sitegen.com for early access.');
 }
 </script>
 {% endblock %}

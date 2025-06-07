@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SiteGen{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">SiteGen Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">{{ user.email }}</span>
+                    <a href="/logout" class="text-sm text-red-600 hover:text-red-500">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        
+        <!-- Quick Actions -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="flex flex-wrap gap-4">
+                    <a href="/capture" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        <span class="mr-2">🚀</span>
+                        Create New Website
+                    </a>
+                    <a href="#templates" 
+                       class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                        <span class="mr-2">🎨</span>
+                        Browse Templates
+                    </a>
+                    <a href="#settings" 
+                       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                        <span class="mr-2">⚙️</span>
+                        Account Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="text-3xl text-blue-600 mr-4">🌐</div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Sites</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ sites|length }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="text-3xl text-green-600 mr-4">📅</div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Member Since</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ user.created_at[:10] if user.created_at else 'Today' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="text-3xl text-purple-600 mr-4">⚡</div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Last Login</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ user.last_login[:10] if user.last_login else 'Today' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your Websites -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Your Websites</h2>
+            </div>
+            
+            {% if sites %}
+            <div class="divide-y divide-gray-200">
+                {% for site in sites %}
+                <div class="p-6 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                {{ site.business_name or 'Untitled Website' }}
+                            </h3>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Created {{ site.created_at[:10] if site.created_at else 'recently' }}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                ID: {{ site.site_id }}
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <a href="{{ site.site_url }}" 
+                               target="_blank"
+                               class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full hover:bg-blue-200 transition-colors">
+                                <span class="mr-1">👁️</span>
+                                View Site
+                            </a>
+                            
+                            <button class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full hover:bg-green-200 transition-colors">
+                                <span class="mr-1">✏️</span>
+                                Edit
+                            </button>
+                            
+                            <a href="/download/{{ site.site_id }}" 
+                               class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full hover:bg-gray-200 transition-colors">
+                                <span class="mr-1">📥</span>
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-12 text-center">
+                <div class="text-6xl mb-4">🌟</div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No websites yet</h3>
+                <p class="text-gray-500 mb-6">Create your first professional website in minutes!</p>
+                <a href="/capture" 
+                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <span class="mr-2">🚀</span>
+                    Create Your First Website
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+    </main>
+</div>
+{% endblock %}
