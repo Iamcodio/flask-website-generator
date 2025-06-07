@@ -287,6 +287,22 @@ class SiteGenerator:
             </div>
         </div>
     </footer>
+    
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {{
+            anchor.addEventListener('click', function (e) {{
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {{
+                    target.scrollIntoView({{
+                        behavior: 'smooth',
+                        block: 'start'
+                    }});
+                }}
+            }});
+        }});
+    </script>
 
     <!-- Minimal JavaScript for mobile menu only -->
     <script>
@@ -440,7 +456,9 @@ class SiteGenerator:
         print(f"🎨 Generating CSS with color: {primary_color}")
         
         try:
-            with open('/home/iac/Documents/flask-app/bluepipe/styles.css', 'r') as f:
+            # Use the CSS template from the templates directory
+            css_template_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates', 'styles.css')
+            with open(css_template_path, 'r') as f:
                 css_content = f.read()
                 
             # Replace the default blue color with the selected primary color
@@ -660,12 +678,16 @@ class SiteGenerator:
                 print(f"❌ Error copying logo: {e}")
         else:
             # Use logo placeholder from app directory
-            placeholder_path = '/home/iac/Documents/flask-app/logo_placeholder.png'
+            placeholder_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'images', 'logo_placeholder.png')
             dest_path = f'{site_dir}/logo.png'
             try:
                 if os.path.exists(placeholder_path):
                     shutil.copy2(placeholder_path, dest_path)
                     print(f"🖼️ Using logo placeholder: logo_placeholder.png")
+                else:
+                    # Create a simple text file as placeholder
+                    with open(dest_path, 'w') as f:
+                        f.write('placeholder')
             except Exception as e:
                 print(f"❌ Error copying logo placeholder: {e}")
         
@@ -693,28 +715,15 @@ class SiteGenerator:
                     print(f"❌ Error copying uploaded {upload_key}: {e}")
             
             # Use placeholder from app directory
-            placeholder_path = f'/home/iac/Documents/flask-app/{placeholder_file}'
+            placeholder_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'images', placeholder_file)
             try:
                 if os.path.exists(placeholder_path):
                     shutil.copy2(placeholder_path, dest_path)
                     print(f"🖼️ Using placeholder: {placeholder_file}")
                 else:
-                    # Fallback to bluepipe template if placeholder doesn't exist
-                    fallback_mapping = {
-                        'hero-background.jpg': 'hero-background.jpg',
-                        'about-image.jpg': 'about-image.jpg', 
-                        'team-image.jpg': 'team-image.jpg'
-                    }
-                    fallback_file = fallback_mapping.get(dest_filename)
-                    if fallback_file:
-                        template_path = f'/home/iac/Documents/flask-app/bluepipe/{fallback_file}'
-                        if os.path.exists(template_path):
-                            shutil.copy2(template_path, dest_path)
-                            print(f"📋 Using template fallback: {fallback_file}")
-                        else:
-                            # Create text placeholder as last resort
-                            with open(dest_path, 'w') as f:
-                                f.write("placeholder image file")
-                            print(f"🖼️ Created text placeholder: {dest_filename}")
+                    # Create a simple text file as placeholder
+                    with open(dest_path, 'w') as f:
+                        f.write('placeholder')
+                    print(f"📝 Created text placeholder for: {dest_filename}")
             except Exception as e:
                 print(f"❌ Error copying placeholder {placeholder_file}: {e}")

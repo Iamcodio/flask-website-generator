@@ -1,0 +1,31 @@
+🔧 Running in development mode - Supabase disabled
+⚠️ Flask-Mail not available. Email sending disabled for development.
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 475-127-484
+127.0.0.1 - - [07/Jun/2025 14:24:15] "GET /admin/leads HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:29] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:31] "GET /capture HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:38] "[32mPOST /capture HTTP/1.1[0m" 302 -
+127.0.0.1 - - [07/Jun/2025 14:24:38] "GET /preview HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/hero-background.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/about-image.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:39] "GET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/team-image.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:51] "POST /auth/email-download HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:53] "GET /auth/download/token/ImtpZXJhbmpkMDE3M0BnbWFpbC5jb206YjMwMTQzMTctNGQ2Mi00NTIzLWFlMWUtNzM2NGYzNGUyOTY4Ig.aEQ9ow.fsm1TaBunw-A5PO3pGJAl4MDbD8 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:55] "GET /preview HTTP/1.1" 200 -
+127.0.0.1 - - [07/Jun/2025 14:24:55] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/index.html HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:24:56] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/styles.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:24:56] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/hero-background.jpg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:24:56] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/about-image.jpg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:24:56] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/logo.png HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:24:56] "[36mGET /generated_sites/b3014317-4d62-4523-ae1e-7364f34e2968/team-image.jpg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [07/Jun/2025 14:25:06] "GET /admin/leads HTTP/1.1" 200 -

@@ -90,41 +90,82 @@ def logout():
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('main.index'))
 
+
 @auth_bp.route('/email-download', methods=['POST'])
 def email_download():
-    """Handle email download request for free tier"""
+    """Handle email submission for free download"""
     try:
-        data = request.get_json()
-        email = data.get('email', '').strip().lower()
-        site_id = data.get('site_id')
-        consent_download = data.get('consent_download', False)
-        consent_marketing = data.get('consent_marketing', False)
+        site_id = request.form.get('site_id')
+        email = request.form.get('email')
+        consent_download = request.form.get('consent_download')
+        consent_marketing = request.form.get('consent_marketing')
         
-        if not email or not site_id:
-            return jsonify({'success': False, 'message': 'Email and site ID required'})
+        print(f"📧 EMAIL-DOWNLOAD REQUEST:")
+        print(f"   Email: {email}")
+        print(f"   Site ID: {site_id}")
+        print(f"   Consent Download: {consent_download}")
+        print(f"   Consent Marketing: {consent_marketing}")
         
-        if not consent_download:
-            return jsonify({'success': False, 'message': 'Download consent is required'})
+        if not site_id or not email or not consent_download:
+            return jsonify({'success': False, 'message': 'Missing required fields'})
         
-        print(f"📧 EMAIL CAPTURED: {email} for site {site_id}")
-        print(f"🔒 CONSENT - Download: {consent_download}, Marketing: {consent_marketing}")
-        
-        # Store email in database/file for lead collection
-        from app.utils.lead_capture import store_email_lead
-        store_email_lead(email, site_id, consent_download, consent_marketing)
-        
-        from flask import current_app
+        # Always capture lead first (even if download fails)
+        print(f"📧 About to capture lead: {email} for site {site_id}")
+        from app.utils.lead_capture import capture_lead
+        try:
+            # Try to get business data from session
+            business_data = session.get('business_data', {})
+            business_name = business_data.get('business_name')
+            industry = business_data.get('industry')
+            print(f"📊 Found business data in session: {business_name}, {industry}")
+            
+            capture_lead(email, site_id, consent_marketing == 'on', 
+                        business_name=business_name, industry=industry)
+            print(f"✅ Lead captured: {email} for site {site_id}")
+        except Exception as e:
+            print(f"⚠️ Lead capture error: {e}")
+            import traceback
+            traceback.print_exc()
         
         # Generate download token
-        download_token = current_app.auth.generate_token(f"{email}:{site_id}")
-        download_url = url_for('auth.download_with_token', token=download_token, _external=True)
+        from flask import current_app
+        try:
+            token = current_app.auth.generate_token(f"{email}:{site_id}")
+            download_url = url_for('auth.download_with_token', token=token, _external=True)
+        except Exception as e:
+            print(f"❌ Error generating download token: {e}")
+            return jsonify({
+                'success': False, 
+                'message': 'Error generating download link. Your information has been saved and we will contact you.',
+                'admin_leads': '/admin/leads'
+            })
         
-        # Send email with download link (or print in dev mode)
-        if current_app.auth.send_download_email(email, download_url, site_id):
-            return jsonify({'success': True, 'message': 'Download link sent successfully'})
-        else:
-            return jsonify({'success': False, 'message': 'Failed to send email'})
-            
+        # In production, send email. In dev, return link directly
+        if current_app.config.get('MAIL_SERVER'):
+            # Send email with download link
+            try:
+                from app.services.auth import send_download_email
+                send_download_email(email, download_url, site_id)
+                return jsonify({
+                    'success': True, 
+                    'message': 'Check your email for the download link!'
+                })
+            except Exception as e:
+                print(f"❌ Email send error: {e}")
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to send email. Your information has been saved.',
+                    'download_url': download_url,  # Still provide download link
+                    'admin_leads': '/admin/leads'
+                })
+        
+        # Dev mode: return link directly
+        return jsonify({
+            'success': True,
+            'message': 'Download link ready!',
+            'download_url': download_url
+        })
+        
     except Exception as e:
         print(f"Error in email download: {e}")
         return jsonify({'success': False, 'message': 'Server error'})

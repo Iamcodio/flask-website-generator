@@ -126,7 +126,7 @@
         
         <!-- Quick Actions -->
         <div class="mt-6 text-center space-x-4">
-            <a href="{{ url_for('capture_business_info') }}" 
+            <a href="{{ url_for('main.capture_business_info') }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
                 Make Changes
             </a>
@@ -260,25 +260,55 @@ function submitEmailDownload(event) {
     // Show loading state
     event.target.querySelector('button[type="submit"]').textContent = 'Sending...';
     
-    fetch('/email-download', {
+    // Send as form data instead of JSON
+    const data = new URLSearchParams();
+    data.append('email', email);
+    data.append('site_id', siteId);
+    data.append('consent_download', consentDownload ? 'on' : 'off');
+    data.append('consent_marketing', consentMarketing ? 'on' : 'off');
+    
+    fetch('/auth/email-download', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-            email: email,
-            site_id: siteId,
-            consent_download: consentDownload,
-            consent_marketing: consentMarketing
-        })
+        body: data
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('📧 Download link sent to ' + email + '! Check your email.');
+            if (data.download_url) {
+                // Dev mode: open download in new tab to avoid navigation issues
+                alert('📧 Download ready! Click OK to download your site.');
+                window.open(data.download_url, '_blank');
+                // Optionally refresh the page after a delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                // Production: email sent
+                alert('📧 Download link sent to ' + email + '! Check your email.');
+            }
             hideEmailForm();
+            
+            // Reset form
+            event.target.reset();
         } else {
-            alert('Error: ' + (data.message || 'Failed to send email'));
+            // Error but lead was captured
+            let message = data.message || 'Failed to send email';
+            
+            if (data.download_url) {
+                // Still provide download even if email failed
+                alert('⚠️ ' + message + '\n\nClick OK to download your site anyway.');
+                window.open(data.download_url, '_blank');
+            } else {
+                alert('⚠️ ' + message);
+            }
+            
+            // Show admin leads link if provided
+            if (data.admin_leads) {
+                console.log('View captured leads at: ' + data.admin_leads);
+            }
         }
     })
     .catch(error => {

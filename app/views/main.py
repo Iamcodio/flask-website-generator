@@ -10,7 +10,7 @@ import zipfile
 from datetime import datetime
 from werkzeug.utils import secure_filename
 
-from app.services.site_generator import SiteGenerator
+from app.services.site_generator_new import SiteGenerator
 from app.utils.file_helpers import allowed_file, save_uploaded_file
 
 main_bp = Blueprint('main', __name__)
@@ -112,7 +112,8 @@ def preview_site():
 @main_bp.route('/generated_sites/<site_id>/<filename>')
 def serve_generated_site(site_id, filename):
     """Serve generated site files"""
-    return send_from_directory(f'generated_sites/{site_id}', filename)
+    base_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'generated_sites', site_id)
+    return send_from_directory(base_path, filename)
 
 @main_bp.route('/uploads/<business_id>/<filename>')
 def serve_uploaded_file(business_id, filename):
